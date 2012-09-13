@@ -3,12 +3,12 @@ var qs = require('querystring');
 
 var slice = Array.prototype.slice;
 var concat = Array.prototype.concat;
-var SUPPORTED_METHODS = ['get', 'post', 'head', 'options', 'put'];
+var SHORTCUT_METHODS = ['get', 'post', 'head', 'options', 'put', 'delete'];
 
 function Router() {
 	this._routes = [];
 	
-	SUPPORTED_METHODS.forEach(function(method) {
+	SHORTCUT_METHODS.forEach(function(method) {
 		this[method] = this.request.bind(this, method);
 	}, this);
 	this.request = this.request.bind(this);

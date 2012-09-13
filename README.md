@@ -68,7 +68,7 @@ router.get('/', indexHandler);
 
 http.createServer(mw(
 	staticFileServer,
-	router,
+	router.dispatch,
 	notFoundHandler
 )).listen(80);
 ```
