@@ -32,9 +32,8 @@ http.createServer(app).listen(80);
 **Using `Router`:**
 ```javascript
 var http = require('http');
-var Router = require('simpleware').Router;
 
-var app = new Router();
+var app = require('simpleware').createRouter();
 app.get('/', indexHandler); // Shortcuts for common methods
 app.post('/', indexPostHandler);
 app.request('head', '/', cacheCheckHandler); // Or use any method
@@ -53,7 +52,7 @@ app.get('/queryendpoint', function(req, res) {
 // Any handlers that could be put into mw also work here
 app.get('/authed', cookieParser, getUser, authedHandler);
 
-http.createServer(app.dispatch).listen(80);
+http.createServer(app).listen(80);
 ```
 
 
@@ -63,12 +62,12 @@ var http = require('http');
 var simpleware = require('simpleware');
 var mw = simpleware.mw;
 
-var router = new simpleware.Router();
+var router = simpleware.createRouter();
 router.get('/', indexHandler);
 
 http.createServer(mw(
 	staticFileServer,
-	router.dispatch,
+	router,
 	notFoundHandler
 )).listen(80);
 ```
