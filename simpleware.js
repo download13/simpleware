@@ -2,81 +2,73 @@ var url = require('url');
 var qs = require('querystring');
 
 var slice = Array.prototype.slice;
+var concat = Array.prototype.concat;
+var SUPPORTED_METHODS = ['get', 'post', 'head', 'options', 'put'];
 
 function Router() {
-	var methods = {};
-	['get', 'post'].forEach(function(method) {
-		methods[method] = {
-			patterns: [],
-			handlers: []
-		};
-	});
-	this._methods = methods;
+	this._routes = [];
 	
+	SUPPORTED_METHODS.forEach(function(method) {
+		this[method] = this.request.bind(this, method);
+	}, this);
+	this.request = this.request.bind(this);
 	this.dispatch = this.dispatch.bind(this);
 }
 Router.prototype = {
 	dispatch: function(req, res, next) {
 		var parts = url.parse(req.url);
 		req.path = parts.pathname;
-		if(parts.query) {
+		if(parts.query) { // Does query parsing
 			req.query = qs.parse(parts.query);
 		}
 		
-		var method = this._methods[req.method.toLowerCase()];
-		var patterns = method.patterns;
+		var method = req.method.toUpperCase();
+		var routes = this._routes;
 		
-		for(var i = 0; i < patterns.length; i++) {
-			var pattern = patterns[i];
+		for(var i = 0; i < routes.length; i++) {
+			var route = routes[i];
+			if(route.method != method) continue;
 			
-			if(typeof pattern != 'string') {
-				var m = req.path.match(pattern);
+			if(typeof route.pattern != 'string') {
+				var m = req.path.match(route.pattern);
 				if(m != null) {
-					req.params = m.slice(1);
-					method.handlers[i](req, res);
+					req.params = m.slice(1); // Gets matched parameters from regex routes
+					route.handler(req, res);
 					return;
 				}
-			} else if(req.path == pattern) {
-				var fn = method.handlers[i];
-				console.log(fn);
-				fn(req, res);
+			} else if(req.path == route.pattern) {
+				route.handler(req, res);
 				return;
 			}
 		}
 		
-		next();
+		next && next();
 	},
-	get: function(pattern, args) {
-		//var args = slice.call(arguments, 1); // TODO: Maybe add a way to use per-route middleware later
-		this._request(this._methods.get, pattern, args);
-	},
-	post: function(pattern, args) {
-		//var args = slice.call(arguments, 1);
-		this._request(this._methods.post, pattern, args);
-	},
-	_request: function(method, pattern, args) {
-		method.patterns.push(pattern);
-		method.handlers.push(args);
+	request: function(method, pattern) {
+		var args = slice.call(arguments, 2);
+		
+		this._routes.push({
+			method: method.toUpperCase(),
+			pattern: pattern,
+			handler: args.length > 1 ? mw.apply(null, args) : args[0]
+		});
 	}
 };
 
-function Middleware(list) {
-	this.list = list;
-	this.server = this.server.bind(this);
-}
-Middleware.prototype = {
-	server: function(req, res) {
-		var list = this.list.slice(0);
+function mw() { // Middleware
+	var list = concat.apply([], arguments);
+	
+	return function(req, res) {
+		var wares = list.slice(0);
+		_next();
 		
 		function _next() {
-			if(list.length > 0) {
-				list.shift()(req, res, _next);
+			if(wares.length > 0) {
+				wares.shift()(req, res, _next);
 			}
 		}
-		
-		_next();
 	}
-};
+}
 
 exports.Router = Router;
-exports.Middleware = Middleware;
+exports.mw = mw;

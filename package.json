@@ -1,12 +1,19 @@
 {
 	"name": "simpleware",
-	"description": "Exremely simple Router and Middleware objects",
-	"version": "0.1.0",
+	"description": "Exremely simple Router and Middleware framework",
+	"version": "0.2.0",
 	"author": "download <download333@gmail.com>",
-	"main": "simpleware.js",
+	"main": "simpleware",
 	"repository": {
 		"type": "git",
 		"url": "https://github.com/download13/simpleware"
+	},
+	"scripts": {
+		"test": "mocha"
+	},
+	"devDependencies": {
+		"mocha": "*",
+		"chai": "*"
 	},
 	"engine": {
 		"node": "*"
