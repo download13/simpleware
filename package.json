@@ -9,11 +9,11 @@
 		"url": "https://github.com/download13/simpleware"
 	},
 	"scripts": {
-		"test": "mocha"
+		"test": "moka"
 	},
 	"devDependencies": {
-		"mocha": "*",
-		"chai": "*"
+		"moka": "0.2.0",
+		"expect.js": "*"
 	},
 	"engine": {
 		"node": "*"

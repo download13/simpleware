@@ -1,8 +1,10 @@
-var expect = require('chai').expect;
+var moka = require('moka');
+var describe = moka.describe;
+var expect = require('expect.js');
 var simpleware = require('../simpleware');
 var mw = simpleware.mw;
 
-describe('mw', function() {
+describe('mw', function(it) {
 	it('should take handlers as arguments', function() {
 		var m = mw(handler1, handler2, handler3);
 		verify(m);
@@ -11,7 +13,7 @@ describe('mw', function() {
 		var m = mw([handler1, handler2, handler3]);
 		verify(m);
 	});
-	it('should take a arrays as arguments', function() {
+	it('should take arrays as arguments', function() {
 		var m = mw([handler1, handler2], [handler3]);
 		verify(m);
 	});
@@ -67,3 +69,5 @@ function verify(m) {
 	expect(req).to.have.property('test', 4);
 	expect(res).to.have.property('done', true);
 }
+
+moka.run({format: 'brief'});

@@ -1,8 +1,10 @@
-var expect = require('chai').expect;
+var moka = require('moka');
+var describe = moka.describe;
+var expect = require('expect.js');
 var simpleware = require('../simpleware');
 var createRouter = simpleware.createRouter;
 
-describe('Router', function() {
+describe('Router', function(it) {
 	it('should take a string as a pattern', function() {
 		var r = createRouter();
 		r.get('/test', handler3);
@@ -45,7 +47,7 @@ describe('Router', function() {
 		r(a.req, a.res);
 		
 		expect(a.req).to.have.property('path');
-		expect(a.req.path).to.be.equal('/test/something.py');
+		expect(a.req.path).to.be('/test/something.py');
 	});
 	it('should parse the url into a query', function() {
 		var r = createRouter();
@@ -55,7 +57,7 @@ describe('Router', function() {
 		r(a.req, a.res);
 		
 		expect(a.req).to.have.property('query');
-		expect(a.req.query).to.be.deep.equal({t: '56', act: 'first'});
+		expect(a.req.query).to.be.eql({t: '56', act: 'first'});
 	});
 	it('should put params on a request with a matching regex', function() {
 		var r = createRouter();
@@ -89,7 +91,7 @@ describe('Router', function() {
 		var a = makeReqRes('HEAD', '/something');
 		r(a.req, a.res, function() {
 			expect(a.req).to.be.an('object');
-			expect(a.res).to.be.deep.equal({});
+			expect(a.res).to.be.eql({});
 			done();
 		});
 	});
@@ -116,3 +118,5 @@ function makeReqRes(method, url) {
 	req.url = url;
 	return {req: req, res: res};
 }
+
+moka.run({format: 'brief'});

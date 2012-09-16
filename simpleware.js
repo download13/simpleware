@@ -11,7 +11,7 @@ function createRouter() {
 	
 	router.request = request.bind(null, routes);
 	SHORTCUT_METHODS.forEach(function(method) {
-		router[method] = request.bind(null, routes, method);
+		router[method] = request.bind(null, routes, method.toUpperCase());
 	});
 	
 	return router;
@@ -44,15 +44,14 @@ function dispatch(routes, req, res, next) {
 			var m = req.path.match(route.pattern);
 			if(m != null) {
 				req.params = m.slice(1); // Gets matched parameters from regex routes
-				route.handler(req, res);
+				route.handler(req, res, next);
 				return;
 			}
 		} else if(req.path == route.pattern) {
-			route.handler(req, res);
+			route.handler(req, res, next);
 			return;
 		}
 	}
-	
 	next && next();
 }
 
