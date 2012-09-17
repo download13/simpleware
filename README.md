@@ -71,3 +71,6 @@ http.createServer(mw(
 	notFoundHandler
 )).listen(80);
 ```
+
+### Caveats:
+* Do not accidentally call a `next()` function more than once in the same handler. It will cause strange behavior like handlers being called out of order or too many times.
