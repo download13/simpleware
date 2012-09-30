@@ -30,9 +30,7 @@ function request(routes, method, pattern) {
 function dispatch(routes, req, res, next) {
 	var parts = url.parse(req.url);
 	req.path = parts.pathname;
-	if(parts.query) { // Does query parsing
-		req.query = qs.parse(parts.query);
-	}
+	req.query = qs.parse(parts.query);
 	
 	var method = req.method.toUpperCase();
 	

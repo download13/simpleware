@@ -59,6 +59,15 @@ describe('Router', function(it) {
 		expect(a.req).to.have.property('query');
 		expect(a.req.query).to.be.eql({t: '56', act: 'first'});
 	});
+	it('should have query object even if there was no query string', function() {
+		var r = createRouter();
+		r.get('/test', handler3);
+		
+		var a = makeReqRes('GET', '/');
+		r(a.req, a.res);
+		
+		expect(a.req).to.have.property('query');
+	});
 	it('should put params on a request with a matching regex', function() {
 		var r = createRouter();
 		r.get(/^\/api\/([a-z.]+)/, handler3);
