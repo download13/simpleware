@@ -38,9 +38,7 @@ function dispatch(routes, req, res, next) {
   if (!routeMethod) return false; //If there are no routes for the current method, why bother?
 
   req.path = parts.pathname;
-  if(parts.query) { // Does query parsing
-    req.query = qs.parse(parts.query);
-  }
+  req.query = qs.parse(parts.query);
 
   for(var i = 0, l = routeMethod.length; i < l; i++) {
     var route = routeMethod[i];
