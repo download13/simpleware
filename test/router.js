@@ -104,6 +104,29 @@ describe('Router', function(it) {
 			done();
 		});
 	});
+	it('should always create a query object', function(done) {
+		var r = createRouter();
+		r.get('/test', handler1);
+		
+		var a = makeReqRes('GET', '/test');
+		r(a.req, a.res, function() {
+			console.log(12);
+			expect(a.req.query).to.be.an('object');
+			done();
+		});
+	});
+	it('should populate the query object', function(done) {
+		var r = createRouter();
+		r.get('/test', handler1);
+		
+		var a = makeReqRes('GET', '/test?something=4&a=test');
+		r(a.req, a.res, function() {
+			expect(a.req.query).to.be.an('object');
+			expect(a.req.query).to.have.property('something', '4');
+			expect(a.req.query).to.have.property('a', 'test');
+			done();
+		});
+	});
 });
 
 function handler1(req, res, next) {
