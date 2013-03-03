@@ -59,6 +59,15 @@ describe('Router', function(it) {
 		expect(a.req).to.have.property('query');
 		expect(a.req.query).to.be.eql({t: '56', act: 'first'});
 	});
+	it('should have query object even if there was no query string', function() {
+		var r = createRouter();
+		r.get('/test', handler3);
+		
+		var a = makeReqRes('GET', '/');
+		r(a.req, a.res);
+		
+		expect(a.req).to.have.property('query');
+	});
 	it('should put params on a request with a matching regex', function() {
 		var r = createRouter();
 		r.get(/^\/api\/([a-z.]+)/, handler3);
@@ -92,6 +101,29 @@ describe('Router', function(it) {
 		r(a.req, a.res, function() {
 			expect(a.req).to.be.an('object');
 			expect(a.res).to.be.eql({});
+			done();
+		});
+	});
+	it('should always create a query object', function(done) {
+		var r = createRouter();
+		r.get('/test', handler1);
+		
+		var a = makeReqRes('GET', '/test');
+		r(a.req, a.res, function() {
+			console.log(12);
+			expect(a.req.query).to.be.an('object');
+			done();
+		});
+	});
+	it('should populate the query object', function(done) {
+		var r = createRouter();
+		r.get('/test', handler1);
+		
+		var a = makeReqRes('GET', '/test?something=4&a=test');
+		r(a.req, a.res, function() {
+			expect(a.req.query).to.be.an('object');
+			expect(a.req.query).to.have.property('something', '4');
+			expect(a.req.query).to.have.property('a', 'test');
 			done();
 		});
 	});
