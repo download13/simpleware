@@ -6,9 +6,10 @@ var url = require('url'),
 
 var SHORTCUT_METHODS = ['get', 'post', 'head', 'options', 'put', 'delete'];
 
-function createRouter() {
-  var routes = {},
-      router = dispatch.bind(null, routes);
+function createRouter(routes) {
+  routes = routes || {};
+
+  var router = dispatch.bind(null, routes);
 
   router.request = request.bind(null, routes);
   SHORTCUT_METHODS.forEach(function(method) {
@@ -36,7 +37,7 @@ function dispatch(routes, req, res, next) {
       method = req.method.toUpperCase(),
       routeMethod = routes[method];
 
-  if (!routeMethod) return false; //If there are no routes for the current method, why bother?
+  if (!(routeMethod && routeMethod.length)) return false; //If there are no routes for the current method, why bother?
 
   req.path = parts.pathname;
   req.query = qs.parse(parts.query) || {};
@@ -69,13 +70,11 @@ function mw() { // Middleware
     var listPlace = 0,
         listLength = list.length;
 
-    _next();
-
-    function _next() {
+    (function _next() {
       if (listPlace < listLength) {
         list[listPlace++](req, res, _next);
       }
-    }
+    })();
   }
 }
 
