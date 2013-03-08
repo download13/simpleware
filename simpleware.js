@@ -6,12 +6,11 @@ var url = require('url'),
 
 var SHORTCUT_METHODS = ['get', 'post', 'head', 'options', 'put', 'delete'];
 
-function createRouter(routes) {
-  routes = routes || {};
+function createRouter() {
+  var routes = {},
+      router = dispatch.bind(null, routes);
 
-  var router = dispatch.bind(null, routes);
-
-  router.request = request.bind(null, routes);
+  router.route = request.bind(null, routes);
   SHORTCUT_METHODS.forEach(function(method) {
     router[method] = request.bind(null, routes, method);
   });
@@ -26,31 +25,29 @@ function request(routes, method, pattern) {
       routeMethod = routes[method] || (routes[method] = []);
 
   routeMethod.push({
-    method: method,
     pattern: pattern,
     handler: args.length > 1 ? mw(args) : args[0]
   });
 }
 
 function dispatch(routes, req, res, next) {
-  var parts = url.parse(req.url),
+  var parts = url.parse(req.url, true),
       method = req.method.toUpperCase(),
       routeMethod = routes[method];
 
   if (!(routeMethod && routeMethod.length)) return false; //If there are no routes for the current method, why bother?
 
   req.path = parts.pathname;
-  req.query = qs.parse(parts.query) || {};
+  req.query = parts.query;
 
   for(var i = 0, l = routeMethod.length; i < l; i++) {
     var route = routeMethod[i];
 
-    //if(route.method != method) continue;
-
-    if(typeof route.pattern !== 'string') {
+    if(route.pattern instanceof RegExp) {
       var m = req.path.match(route.pattern);
       if(m != null) {
-        req.params = m.slice(1); // Gets matched parameters from regex routes
+        m.shift(); // Remove the first item in matches (faster than .slice(1))
+        req.params = m; // Gets matched parameters from regex routes
         route.handler(req, res, next);
         return;
       }
