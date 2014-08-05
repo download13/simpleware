@@ -1,7 +1,7 @@
 {
 	"name": "simpleware",
 	"description": "Exremely simple Router and Middleware framework",
-	"version": "0.2.2",
+	"version": "0.2.3",
 	"author": "download <download333@gmail.com>",
 	"main": "simpleware",
 	"repository": {
