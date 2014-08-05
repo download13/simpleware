@@ -6,8 +6,9 @@
 	"main": "simpleware",
 	"repository": {
 		"type": "git",
-		"url": "https://github.com/download13/simpleware"
+		"url": "https://github.com/download13/simpleware.git"
 	},
+	"homepage": "https://github.com/download13/simpleware",
 	"scripts": {
 		"test": "moka"
 	},
