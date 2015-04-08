@@ -1,3 +1,8 @@
+# Deprecated!
+
+This module's functionality has been moved into [http-router-fn](https://github.com/download13/http-router-fn) and [mw-compose](https://github.com/download13/mw-compose).
+
+
 Simpleware
 ==========
 
